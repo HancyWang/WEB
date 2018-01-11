@@ -1,0 +1,10 @@
+D:\VS_Practice\iPEEP\iPEEP\obj\Release\WEB.Form1.resources
+D:\VS_Practice\iPEEP\iPEEP\obj\Release\WEB.Form_AboutUs_Chinese.resources
+D:\VS_Practice\iPEEP\iPEEP\obj\Release\WEB.Form_AboutUs_English.resources
+D:\VS_Practice\iPEEP\iPEEP\obj\Release\WEB.csproj.GenerateResource.Cache
+D:\VS_Practice\iPEEP\iPEEP\bin\Release\WEB.exe.config
+D:\VS_Practice\iPEEP\iPEEP\bin\Release\WEB.exe
+D:\VS_Practice\iPEEP\iPEEP\bin\Release\WEB.pdb
+D:\VS_Practice\iPEEP\iPEEP\obj\Release\WEB.Properties.Resources.resources
+D:\VS_Practice\iPEEP\iPEEP\obj\Release\WEB.exe
+D:\VS_Practice\iPEEP\iPEEP\obj\Release\WEB.pdb

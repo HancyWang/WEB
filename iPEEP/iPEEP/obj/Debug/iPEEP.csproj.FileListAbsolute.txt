@@ -1,0 +1,11 @@
+D:\VS_Practice\iPEEP\iPEEP\bin\Debug\iPEEP.exe.config
+D:\VS_Practice\iPEEP\iPEEP\bin\Debug\iPEEP.exe
+D:\VS_Practice\iPEEP\iPEEP\bin\Debug\iPEEP.pdb
+D:\VS_Practice\iPEEP\iPEEP\obj\Debug\iPEEP.Form1.resources
+D:\VS_Practice\iPEEP\iPEEP\obj\Debug\iPEEP.Properties.Resources.resources
+D:\VS_Practice\iPEEP\iPEEP\obj\Debug\iPEEP.csproj.GenerateResource.Cache
+D:\VS_Practice\iPEEP\iPEEP\obj\Debug\iPEEP.exe
+D:\VS_Practice\iPEEP\iPEEP\obj\Debug\iPEEP.pdb
+D:\VS_Practice\iPEEP\iPEEP\obj\Debug\iPEEP.Form_AboutUs_Chinese.resources
+D:\VS_Practice\iPEEP\iPEEP\obj\Debug\iPEEP.Form_AboutUs_English.resources
+D:\VS_Practice\iPEEP\iPEEP\obj\Debug\iPEEP.csprojResolveAssemblyReference.cache
