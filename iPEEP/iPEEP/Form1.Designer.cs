@@ -64,6 +64,8 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox_serialPort_set.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_serialPort)).BeginInit();
             this.groupBox_equip_Operation.SuspendLayout();
@@ -280,6 +282,8 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Controls.Add(this.progressBar1);
             this.groupBox3.Controls.Add(this.button_exportListView);
             this.groupBox3.Controls.Add(this.button_clearListview);
@@ -300,7 +304,7 @@
             // 
             // button_exportListView
             // 
-            this.button_exportListView.Location = new System.Drawing.Point(208, 11);
+            this.button_exportListView.Location = new System.Drawing.Point(208, 9);
             this.button_exportListView.Name = "button_exportListView";
             this.button_exportListView.Size = new System.Drawing.Size(75, 23);
             this.button_exportListView.TabIndex = 3;
@@ -310,7 +314,7 @@
             // 
             // button_clearListview
             // 
-            this.button_clearListview.Location = new System.Drawing.Point(37, 11);
+            this.button_clearListview.Location = new System.Drawing.Point(26, 9);
             this.button_clearListview.Name = "button_clearListview";
             this.button_clearListview.Size = new System.Drawing.Size(75, 23);
             this.button_clearListview.TabIndex = 2;
@@ -399,6 +403,23 @@
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(458, 14);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "label1";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 17);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(0, 12);
+            this.label2.TabIndex = 5;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -411,6 +432,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "电子空氧混合器报警管理软件";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox_serialPort_set.ResumeLayout(false);
             this.groupBox_serialPort_set.PerformLayout();
@@ -420,6 +442,7 @@
             this.panel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -464,6 +487,8 @@
         private System.Windows.Forms.Button button_exportListView;
         private System.Windows.Forms.Button button_clearListview;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }
 

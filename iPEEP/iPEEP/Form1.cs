@@ -171,7 +171,7 @@ namespace WEB
             frame_alarmCount.data2=Convert.ToByte(alarmTotalNum%256);      //报警总数2
             byte[] buffer=GetData(frame_alarmCount);
             int sum=0;
-            for(int i=0;i<Convert.ToInt32(frame_alarmCount.len);i++)
+            for(int i=1;i<Convert.ToInt32(frame_alarmCount.len);i++)
             {
                 sum += Convert.ToInt32(buffer[i]);
             }
@@ -195,7 +195,8 @@ namespace WEB
                 frame_common.len = 0x85;  //可以产生8个报警信息,假设是满载
                 frame_common.cmdtype = 0x00;
                 frame_common.frameID = 0x21;
-                sum += frame_common.head + frame_common.len + frame_common.cmdtype + frame_common.frameID;
+                //sum += frame_common.head + frame_common.len + frame_common.cmdtype + frame_common.frameID;
+                sum +=  frame_common.len + frame_common.cmdtype + frame_common.frameID;
 
                 //MessageBox.Show(sum.ToString());
                 var bf_frameCommon = GetData(frame_common);
@@ -204,7 +205,7 @@ namespace WEB
                 bw.Write(Convert.ToByte(msgNumInAlarmFrame));  //写入信息条数,一个帧带16个报警信息
                 sum += msgNumInAlarmFrame;
 
-                for (int j = 0; j < msgNumInAlarmFrame; j++)  //满载
+                for (int j = 0; j < msgNumInAlarmFrame; j++)  //满载,16个
                 {
                     TEST_AlARMMSG msg = new TEST_AlARMMSG();
                     tm_test = tm_test.AddMinutes(1);
@@ -214,10 +215,10 @@ namespace WEB
                     msg.time1 = Convert.ToByte((sec % (256 * 256)) / 256);
                     msg.time2 = Convert.ToByte((sec / 256 / 256) % 256);
                     msg.time3 = Convert.ToByte(sec / 256 / 256 / 256);
-                    msg.data0 = 0x00;
+                    msg.data0 = Convert.ToByte(rd.Next(1, 5));
                     msg.data1 = 0x00;
                     msg.data2 = 0x00;
-                    msg.data3 = Convert.ToByte(rd.Next(1, 5));
+                    msg.data3 = 0x00;
 
                     sum += msg.time0 + msg.time1 + msg.time2 + msg.time3 + msg.data0 + msg.data1 + msg.data2 + msg.data3;
 
@@ -234,7 +235,7 @@ namespace WEB
 
             #endregion
 
-            //产生数据校验和帧
+            //产生数据校验和帧，上位机已经改动了，不按这个做；目前按接收的报警条数来计算
             #region
             sum = 0;
             TEST_FARAM_VERIFY frame_verify = new TEST_FARAM_VERIFY();
@@ -247,7 +248,7 @@ namespace WEB
             frame_verify.data2 = Convert.ToByte((packageCheckSum / 256 / 256) % 256);
             frame_verify.data3 = Convert.ToByte(packageCheckSum / 256 / 256 / 256);
             var bf_verify = GetData(frame_verify);
-            sum += frame_verify.head + frame_verify.len + frame_verify.cmdtype + frame_verify.frameID + frame_verify.data0 + frame_verify.data1 + frame_verify.data2 + frame_verify.data3;
+            sum += frame_verify.len + frame_verify.cmdtype + frame_verify.frameID + frame_verify.data0 + frame_verify.data1 + frame_verify.data2 + frame_verify.data3;
            
             bf_verify[Convert.ToInt32(frame_verify.len)] = Convert.ToByte(sum / 256);
             bf_verify[Convert.ToInt32(frame_verify.len) + 1] = Convert.ToByte(sum % 256);
@@ -262,6 +263,8 @@ namespace WEB
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.label1.Text = "0/0";
+            this.label1.Visible = false;
             //隐藏删除报警button
             this.button_deleteAlarmData.Visible = false;
             //初始化报警列表头
@@ -340,11 +343,12 @@ namespace WEB
             
             if (m_bSerialPortIsWorking)
             {
-                m_timer.Interval = 10000;  //设置10s的无响应时间
+                //取消定时器，这个不需要了
+                m_timer.Interval = 200000;  //设置200s的无响应时间
                 m_timer.Tick += timer_Tick;
-                m_timer.Start();
+                //m_timer.Start();    //不需要定时器
 
-                MessageBox.Show(LanguageMngr.data_is_importing_do_not_click_again());
+                //MessageBox.Show(LanguageMngr.data_is_importing_do_not_click_again());
                 return;
             }
             this.button_clearListview.Enabled = false;
@@ -361,7 +365,7 @@ namespace WEB
             byte[] buffer = GetData(require);
 
             int sum = 0;
-            for (int i = 0; i < Convert.ToInt32(require.LEN); i++)
+            for (int i = 1; i < Convert.ToInt32(require.LEN); i++)
             {
                 sum += buffer[i];
             }
@@ -400,6 +404,7 @@ namespace WEB
                 {
                     this.progressBar1.Maximum = m_alarm_count;
                     this.progressBar1.Value = m_current_alarmCount;
+                    this.label1.Text = m_current_alarmCount.ToString() + @"/" + m_alarm_count.ToString();
                 }
                 //说明：m_alarm_count和m_current_alarmCount已经更新到最新数据，
                 //但加了Thread.Sleep(50)会导致m_bSerialPortIsWorking变成false后没法执行下面的代码
@@ -407,8 +412,15 @@ namespace WEB
                 //如果去掉Thread.Sleep(50)会导致cpu占有率非常高
                 if (m_bSerialPortIsWorking)  
                 {
-                    this.progressBar1.Maximum = m_alarm_count;
-                    this.progressBar1.Value = m_current_alarmCount;
+                    if (this.progressBar1!=null)
+                    {
+                        this.progressBar1.Maximum = m_alarm_count;
+                        this.progressBar1.Value = m_current_alarmCount;
+                    }
+                    if(this.label1!=null)
+                    {
+                        this.label1.Text = m_current_alarmCount.ToString() + @"/" + m_alarm_count.ToString();
+                    }    
                 }
                 Thread.Sleep(50);
             }    
@@ -501,7 +513,7 @@ namespace WEB
                 msg.No=m_nIndex.ToString();
                 msg.dateTime=tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss");
                 //msg.alarmStr=GetAlarmStrByType(Convert.ToInt32(m_buffer[5 + 8 * i + 7]));
-                msg.alarmNo = Convert.ToInt32(m_buffer[5 + 8 * i + 7]);
+                msg.alarmNo = Convert.ToInt32(m_buffer[5 + 8 * i + 4]);
                 //MessageBox.Show(msg.alarmStr);
                 //先将信息挂入到链表中
                 m_list_AlarmMsg.Add(msg);
@@ -512,12 +524,31 @@ namespace WEB
         }
         private void VerifyTotalCheckSum()
         {
-            UInt32 sum = 256 * 256 * 256 * Convert.ToUInt32(m_buffer[7])
-                            + 256 * 256 * Convert.ToUInt32(m_buffer[6])
-                            + 256 * Convert.ToUInt32(m_buffer[5])
-                            + Convert.ToUInt32(m_buffer[4]);
-            //MessageBox.Show(m_totalCheckSum.ToString()+"......."+sum.ToString());
-            if(sum==m_totalCheckSum)
+            //屏蔽
+            #region
+            //UInt32 sum = 256 * 256 * 256 * Convert.ToUInt32(m_buffer[7])
+            //                + 256 * 256 * Convert.ToUInt32(m_buffer[6])
+            //                + 256 * Convert.ToUInt32(m_buffer[5])
+            //                + Convert.ToUInt32(m_buffer[4]);
+            ////MessageBox.Show(m_totalCheckSum.ToString()+"......."+sum.ToString());
+            //byte data_3 = Convert.ToByte(m_totalCheckSum / 256 / 256 / 256);
+            //byte data_2 = Convert.ToByte(m_totalCheckSum / 256 / 256 % 256);
+            //byte data_1 = Convert.ToByte(m_totalCheckSum % (256 * 256) / 256);
+            //byte data_0 = Convert.ToByte(m_totalCheckSum % 256);
+            //data_3 &= 0xee;
+            //data_2 &= 0xee;
+            //data_1 &= 0xee;
+            //data_0 &= 0xee;
+
+            //m_totalCheckSum = 256 * 256 * 256 * Convert.ToUInt32(data_3) + 256 * 256 * Convert.ToUInt32(data_2)
+            //                + 256 * Convert.ToUInt32(data_1) + Convert.ToUInt32(data_0);
+            ////MessageBox.Show(m_totalCheckSum.ToString()+"......."+sum.ToString());
+            ////m_totalCheckSum = 9924; //debug
+            #endregion
+
+            //直接校验接收msg的条数，不按校验和来校验了
+            if (m_current_alarmCount == m_alarm_count)
+            //if(sum==m_totalCheckSum)
             {
                 m_RcvStates = 1;
                 m_bSerialPortIsWorking = false;
@@ -545,10 +576,10 @@ namespace WEB
             {
                 return;
             }
-           
+            
             for(int i=0;i< Convert.ToInt32(m_buffer[LEN])+2;i++)
             {
-                if (m_buffer[FRAME_ID] != 0x22)
+                if (m_buffer[FRAME_ID] != 0x22 && m_buffer[FRAME_ID] != 0x24)
                 {
                     m_totalCheckSum += Convert.ToUInt32(m_buffer[i]);  //数据包的CheckSum  
                 }  
@@ -568,6 +599,8 @@ namespace WEB
                     break;
                 case 0x22: //如果是帧(报警数据校验和)
                     VerifyTotalCheckSum();
+                    //m_bPackageRcvCompleted = true;
+                    //m_RcvStates = 1;
                     break;
                 default:
                     m_RcvStates = 0;
@@ -580,7 +613,7 @@ namespace WEB
             var nPendingRead = this.serialPort1.BytesToRead; 
             byte[] tmp = new byte[nPendingRead];
             this.serialPort1.Read(tmp, 0, nPendingRead);
-
+            
             lock(m_buffer)
             {
                 m_buffer.AddRange(tmp);
@@ -597,10 +630,11 @@ namespace WEB
                         }
                         int checksum = 256 * Convert.ToInt32(m_buffer[len]) + Convert.ToInt32(m_buffer[len + 1]);
                         int sum = 0;
-                        for (int i = 0; i < len; i++)
+                        for (int i = 1; i < len; i++) //校验和不包含包头
                         {
                             sum += Convert.ToInt32(m_buffer[i]);
                         }
+                        //MessageBox.Show(sum.ToString());
                         if (checksum == sum)
                         {
                             //解析数据，加入到链表中
@@ -679,6 +713,7 @@ namespace WEB
                 foreach(var msg in m_list_AlarmMsg)
                 {
                     sw.WriteLine(msg.No + "," + msg.dateTime + "," + GetAlarmStrByType(msg.alarmNo));
+                    MessageBox.Show(msg.alarmNo.ToString());
                 }
 
                 sw.Close();
@@ -829,6 +864,19 @@ namespace WEB
             this.comboBox_serial_port.Items.AddRange(names);
             this.comboBox_serial_port.SelectedIndex = 0;
            
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(m_thread_showListview!=null)
+            {
+                m_thread_showListview.Abort();
+            }
+            if(m_thread_showProgressBar!=null)
+            {
+                m_thread_showProgressBar.Abort();
+            }
+            InitMembers();
         }
 
     }
